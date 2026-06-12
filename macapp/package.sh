@@ -26,7 +26,7 @@ echo "Generating Homebrew Cask formula ($CASK_FILE)..."
 
 cat <<EOF > "$CASK_FILE"
 cask "spidey-watch" do
-  version "1.0.1"
+  version "1.0.2"
   sha256 "$SHA256"
 
   url "https://github.com/Ar555Rathod/IdleDectorSpidey/releases/download/v#{version}/SpideyWatch.zip"
@@ -44,7 +44,7 @@ end
 EOF
 
 echo "=== Packaging Completed ==="
-echo "1. Upload 'SpideyWatch.zip' to a GitHub Release (tagged v1.0.1) in your repository."
+echo "1. Upload 'SpideyWatch.zip' to a GitHub Release (tagged v1.0.2) in your repository."
 echo "2. Add the generated '$CASK_FILE' file to your homebrew-tap repository (Ar555Rathod/homebrew-tap)."
 echo "3. Anyone can then install/upgrade your app by running:"
 echo "   brew tap Ar555Rathod/tap"
