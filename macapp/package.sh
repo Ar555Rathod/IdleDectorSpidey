@@ -26,14 +26,13 @@ echo "Generating Homebrew Cask formula ($CASK_FILE)..."
 
 cat <<EOF > "$CASK_FILE"
 cask "spidey-watch" do
-  version "1.0.0"
+  version "1.0.1"
   sha256 "$SHA256"
 
-  # Replace YOUR_GITHUB_USERNAME with your actual GitHub username
-  url "https://github.com/YOUR_GITHUB_USERNAME/IdleDectorSpidey/releases/download/v#{version}/SpideyWatch.zip"
+  url "https://github.com/Ar555Rathod/IdleDectorSpidey/releases/download/v#{version}/SpideyWatch.zip"
   name "Spidey Watch"
   desc "A Spider-Man desktop companion that goes berserk when you are idle"
-  homepage "https://github.com/YOUR_GITHUB_USERNAME/IdleDectorSpidey"
+  homepage "https://github.com/Ar555Rathod/IdleDectorSpidey"
 
   app "SpideyWatch.app"
 
@@ -45,9 +44,8 @@ end
 EOF
 
 echo "=== Packaging Completed ==="
-echo "1. Upload 'SpideyWatch.zip' to a GitHub Release (tagged v1.0.0) in your repository."
-echo "2. Create a GitHub repository named 'homebrew-tap' (e.g. github.com/YOUR_GITHUB_USERNAME/homebrew-tap)."
-echo "3. Add the generated '$CASK_FILE' file to that repository."
-echo "4. Anyone can then install your app by running:"
-echo "   brew tap YOUR_GITHUB_USERNAME/tap"
+echo "1. Upload 'SpideyWatch.zip' to a GitHub Release (tagged v1.0.1) in your repository."
+echo "2. Add the generated '$CASK_FILE' file to your homebrew-tap repository (Ar555Rathod/homebrew-tap)."
+echo "3. Anyone can then install/upgrade your app by running:"
+echo "   brew tap Ar555Rathod/tap"
 echo "   brew install --cask spidey-watch"

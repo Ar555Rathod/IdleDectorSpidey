@@ -169,11 +169,17 @@ window.endBerserkMode = function(silent = false) {
         spideyContainer.classList.add('spidey-hanging');
         spideyContainer.style.transformOrigin = 'top center';
       }
+      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.spideyAction) {
+        window.webkit.messageHandlers.spideyAction.postMessage("returnedHome");
+      }
     });
   } else if (spideyContainer) {
     spideyContainer.style.transform = `translate(0px, 0px) rotate(0deg)`;
     spideyContainer.classList.add('spidey-hanging');
     spideyContainer.style.transformOrigin = 'top center';
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.spideyAction) {
+      window.webkit.messageHandlers.spideyAction.postMessage("returnedHome");
+    }
   }
 };
 

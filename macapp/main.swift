@@ -127,6 +127,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         
         if isEnabled {
             if !isSystemFullScreen {
+                setWindowSize(fullScreen: false)
                 overlayWindow.orderFront(nil)
             }
         } else {
@@ -159,10 +160,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
     }
     
     func setupOverlayWindow() {
-        let screenRect = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
+        let initialRect = NSRect(x: 0, y: 0, width: 150, height: 160)
         
         overlayWindow = NSWindow(
-            contentRect: screenRect,
+            contentRect: initialRect,
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
@@ -179,12 +180,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         let config = WKWebViewConfiguration()
         let contentController = WKUserContentController()
         contentController.add(self, name: "spideyLog")
+        contentController.add(self, name: "spideyAction")
         config.userContentController = contentController
         
         // Transparent WebView configurations
         config.setValue(false, forKey: "drawsBackground")
         
-        webView = WKWebView(frame: screenRect, configuration: config)
+        webView = WKWebView(frame: initialRect, configuration: config)
         webView.autoresizingMask = [.width, .height]
         webView.navigationDelegate = self
         webView.setValue(false, forKey: "drawsBackground")
@@ -199,10 +201,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
         
         overlayWindow.contentView = webView
         
+        setWindowSize(fullScreen: false)
+        
         if isEnabled && !isSystemFullScreen {
             overlayWindow.makeKeyAndOrderFront(nil)
         }
-        print("Overlay window set up: \(screenRect.width)x\(screenRect.height)")
+        print("Overlay window set up: 150x160")
+    }
+    
+    func setWindowSize(fullScreen: Bool) {
+        guard let screen = NSScreen.main else { return }
+        let screenRect = screen.frame
+        
+        let targetFrame: NSRect
+        if fullScreen {
+            targetFrame = screenRect
+        } else {
+            let width: CGFloat = 150
+            let height: CGFloat = 160
+            targetFrame = NSRect(
+                x: screenRect.maxX - width,
+                y: screenRect.maxY - height,
+                width: width,
+                height: height
+            )
+        }
+        
+        overlayWindow.setFrame(targetFrame, display: true, animate: false)
     }
     
     // WKNavigationDelegate
@@ -256,6 +281,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
             isSystemFullScreen = false
             
             // Re-show overlay window
+            setWindowSize(fullScreen: isBerserk)
             overlayWindow.orderFront(nil)
             updateJSSettings()
         }
@@ -269,6 +295,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
             if !isBerserk {
                 print("System idle for \(Int(idleTime))s >= \(Int(timeout))s. Activating Berserk Mode.")
                 isBerserk = true
+                setWindowSize(fullScreen: true)
                 webView.evaluateJavaScript("window.startBerserkMode();", completionHandler: nil)
             }
         } else {
@@ -351,6 +378,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "spideyLog", let logBody = message.body as? String {
             print("[JS LOG] \(logBody)")
+        } else if message.name == "spideyAction", let actionBody = message.body as? String {
+            print("[JS ACTION] \(actionBody)")
+            if actionBody == "returnedHome" {
+                setWindowSize(fullScreen: false)
+            }
         }
     }
 }
