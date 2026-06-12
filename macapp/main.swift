@@ -340,22 +340,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
     }
     
     func isAnyAppFullScreen() -> Bool {
-        let screenFrame = NSScreen.main?.frame ?? NSRect.zero
-        if screenFrame.width == 0 || screenFrame.height == 0 { return false }
-        
         let options = CGWindowListOption.optionOnScreenOnly
         guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as NSArray? as? [[String: Any]] else {
             return false
         }
+        
+        let currentPID = NSRunningApplication.current.processIdentifier
+        let ourWindowNumber = overlayWindow?.windowNumber ?? -1
+        let screens = NSScreen.screens
         
         for window in windowList {
             let layer = window[kCGWindowLayer as String] as? Int ?? 0
             
             // Check layers 0 to 5 (normal application windows)
             if layer >= 0 && layer <= 5 {
+                // Ignore our own application's windows by process ID
+                if let ownerPIDNum = window[kCGWindowOwnerPID as String] as? NSNumber,
+                   ownerPIDNum.int32Value == currentPID {
+                    continue
+                }
+                
+                // Ignore our specific overlay window by window number
+                if let windowNumberNum = window[kCGWindowNumber as String] as? NSNumber,
+                   windowNumberNum.intValue == ourWindowNumber {
+                    continue
+                }
+                
                 let ownerName = window[kCGWindowOwnerName as String] as? String ?? ""
                 
-                // Ignore our own overlay window
+                // Ignore our own overlay window by name fallback
                 if ownerName == "SpideyWatch" || ownerName == "Spidey Watch" {
                     continue
                 }
@@ -364,9 +377,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
                 let w = boundsDict["Width"] as? Double ?? 0.0
                 let h = boundsDict["Height"] as? Double ?? 0.0
                 
-                // Allow a tiny rounding error of 1.5 pixels
-                if w >= (screenFrame.width - 1.5) && h >= (screenFrame.height - 1.5) {
-                    return true
+                // Check if this window matches the size of any connected screen
+                for screen in screens {
+                    let screenFrame = screen.frame
+                    if w >= (Double(screenFrame.width) - 1.5) && h >= (Double(screenFrame.height) - 1.5) {
+                        return true
+                    }
                 }
             }
         }
