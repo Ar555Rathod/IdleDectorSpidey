@@ -1,6 +1,6 @@
 cask "spidey-watch" do
   version "1.0.2"
-  sha256 "c26159bb3511d4bdac51315d82a77c69a5fa296b4ef273a4d311fab47c4c3924"
+  sha256 "7372bda7a93636ce585dee4a4836f2701832c7eb0ef054a2b7e99feb0b7287bc"
 
   url "https://github.com/Ar555Rathod/IdleDectorSpidey/releases/download/v#{version}/SpideyWatch.zip"
   name "Spidey Watch"
