@@ -1,0 +1,193 @@
+/* Base Transparent Document Layout */
+html, body {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none; /* Make document background click-through */
+}
+
+/* Base Containers */
+#spidey-canvas-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483645;
+  pointer-events: none;
+}
+
+#spidey-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 2147483646;
+  width: 100px;
+  height: 120px;
+  pointer-events: auto; /* Catch hover/click events specifically for Spidey */
+  transition: transform 0.5s ease-out; /* For jumping and swinging */
+  transform-origin: top center;
+}
+
+/* Passive Wind Sway */
+.spidey-hanging {
+  animation: wind-sway 4s ease-in-out infinite alternate;
+  transform-origin: top center;
+}
+
+@keyframes wind-sway {
+  0% { transform: rotate(-3deg); }
+  100% { transform: rotate(3deg); }
+}
+
+/* Hover wave */
+#spidey-container:hover .spidey-arm-right {
+  animation: spidey-wave 0.5s ease-in-out 2 alternate;
+}
+
+@keyframes spidey-wave {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(30deg); }
+}
+
+/* Eye blink - triggered by class or keyframes */
+.spidey-lens {
+  transform-origin: center;
+  transition: transform 0.1s;
+}
+.spidey-blink .spidey-lens {
+  transform: scaleY(0.1);
+}
+
+/* General Limb Transitions */
+.spidey-arm-left, .spidey-arm-right, .spidey-leg-left, .spidey-leg-right, .spidey-head {
+  transition: transform 0.2s ease-out;
+}
+.spidey-arm-left { transform-origin: top left; }
+.spidey-arm-right { transform-origin: top right; }
+.spidey-head { transform-origin: center; }
+
+/* Head scratch */
+.spidey-scratch .spidey-arm-right {
+  animation: head-scratch 1s ease-in-out;
+}
+@keyframes head-scratch {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-120deg) translateY(10px); }
+  50% { transform: rotate(-100deg) translateY(5px); }
+  75% { transform: rotate(-120deg) translateY(10px); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Leg cross */
+.spidey-leg-left, .spidey-leg-right {
+  transform-origin: top center;
+  transition: transform 0.3s;
+}
+.spidey-leg-cross .spidey-leg-left {
+  transform: rotate(20deg);
+}
+
+/* Berserk Shudder */
+.spidey-shudder {
+  animation: shudder 0.3s linear;
+}
+@keyframes shudder {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px) rotate(-1deg); }
+  50% { transform: translateX(2px) rotate(1deg); }
+  75% { transform: translateX(-2px) rotate(-1deg); }
+  100% { transform: translateX(0); }
+}
+
+/* Jump */
+.spidey-jump {
+  animation: jump 0.4s ease-out;
+}
+@keyframes jump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1) translateY(-10px); }
+  100% { transform: scale(1); }
+}
+
+/* Target element wobble (less relevant on desktop, but kept for consistency) */
+.spidey-wobble {
+  animation: wobble 0.5s linear;
+}
+@keyframes wobble {
+  0% { transform: translateX(0%); }
+  15% { transform: translateX(-5px) rotate(-2deg); }
+  30% { transform: translateX(4px) rotate(2deg); }
+  45% { transform: translateX(-3px) rotate(-1deg); }
+  60% { transform: translateX(2px) rotate(1deg); }
+  75% { transform: translateX(-1px) rotate(0); }
+  100% { transform: translateX(0%); }
+}
+
+/* Speech Bubble */
+.spidey-speech-bubble {
+  position: absolute;
+  top: 50%;
+  right: 110%;
+  background: white;
+  color: black;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid #333;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+  pointer-events: none;
+}
+.spidey-speech-bubble::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 6px 0 6px 10px;
+  border-style: solid;
+  border-color: transparent transparent transparent white;
+}
+.spidey-speech-bubble::before {
+  content: '';
+  position: absolute;
+  right: -13px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 8px 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent transparent #333;
+  z-index: -1;
+}
+.spidey-speech-bubble.fade-out {
+  opacity: 0;
+}
+
+/* Swinging Pose */
+.spidey-swinging .spidey-passive-web {
+  display: none;
+}
+.spidey-swinging .spidey-arm-left {
+  transform: rotate(140deg) translateY(-20px) !important;
+}
+.spidey-swinging .spidey-arm-right {
+  transform: rotate(-140deg) translateY(-20px) !important;
+}
+.spidey-swinging .spidey-leg-left {
+  transform: rotate(-40deg) translateY(10px) !important;
+}
+.spidey-swinging .spidey-leg-right {
+  transform: rotate(40deg) translateY(10px) !important;
+}
+.spidey-swinging .spidey-head {
+  /* Looking forward instead of upside down */
+  transform: translate(50px, 85px) rotate(180deg) !important;
+}
