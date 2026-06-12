@@ -377,10 +377,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKNa
                 let w = boundsDict["Width"] as? Double ?? 0.0
                 let h = boundsDict["Height"] as? Double ?? 0.0
                 
-                // Check if this window matches the size of any connected screen
+                // Check if this window matches the size of any connected screen (allowing for notch / menu bar)
                 for screen in screens {
                     let screenFrame = screen.frame
-                    if w >= (Double(screenFrame.width) - 1.5) && h >= (Double(screenFrame.height) - 1.5) {
+                    let widthMatches = w >= (Double(screenFrame.width) - 10.0)
+                    let heightMatches = h >= (Double(screenFrame.height) - 45.0)
+                    if widthMatches && heightMatches {
                         return true
                     }
                 }
